@@ -1,0 +1,27 @@
+
+Create a reorder algorithm scheduling application with these features:
+
+1. Implement a TypeScript algorithm that calculates optimal order scheduling for manufacturing parts based on:
+   - Production requirements (Rqt)
+   - Current inventory levels (Inv)
+   - Scheduled receiving (Rec)
+   - Manufacturing parameters (MOQ, PkQty, LdTm, InvTgt, SStok)
+
+2. The algorithm should:
+   - Calculate optimal order quantities considering lead times and minimums
+   - Avoid production halts due to inventory shortages
+   - Prevent excessive inventory (>3x target for multiple weeks)
+   - Aim to keep inventory close to target + safety stock levels
+
+3. Build a React UI with:
+   - A table showing both input scenarios and calculated schedules
+   - Color-coding for inventory status (zero, below safety stock, excessive, high)
+   - Pagination for better data browsing
+   - Ability to generate new random data for testing
+   - Clear section headings and organized data display
+
+4. Use shadcn/ui components for a clean, professional interface.
+
+5. Include a legend explaining the color-coding system.
+
+The application should help manufacturing planners visualize and optimize their ordering strategies to maintain ideal inventory levels while meeting production requirements.
