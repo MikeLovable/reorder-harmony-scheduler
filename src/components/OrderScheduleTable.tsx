@@ -2,11 +2,9 @@
 import React from 'react';
 import { ProductionScenario, OrderSchedule } from '../types';
 import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead,
-  TableRow as ShadcnTableRow
+  Table,
+  TableHeader,
+  TableBody
 } from '@/components/ui/table';
 import TableRow from './TableRow';
 import TableHeaderComponent from './TableHeader';
@@ -18,8 +16,8 @@ interface OrderScheduleTableProps {
 
 const OrderScheduleTable: React.FC<OrderScheduleTableProps> = ({ scenarios, schedules }) => {
   return (
-    <div className="overflow-x-auto max-w-full">
-      <Table className="w-full border-collapse border border-gray-300 text-sm">
+    <div className="w-full overflow-x-auto border rounded-lg">
+      <Table>
         <TableHeader>
           <TableHeaderComponent />
         </TableHeader>
@@ -28,7 +26,7 @@ const OrderScheduleTable: React.FC<OrderScheduleTableProps> = ({ scenarios, sche
             <TableRow 
               key={scenario.MPN} 
               scenario={scenario} 
-              schedule={schedules[index]} 
+              schedule={schedules[index]}
             />
           ))}
         </TableBody>
