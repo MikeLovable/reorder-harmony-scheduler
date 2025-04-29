@@ -17,7 +17,7 @@ function generateMPN(): string {
 }
 
 // Generate a random production scenario
-export function generateProductionScenario(): ProductionScenario {
+function generateProductionScenario(): ProductionScenario {
   // Generate core properties
   const invTgt = randomInt(10, 200);
   const sstok = Math.min(randomInt(0, 10), Math.floor(invTgt * 0.05));
@@ -52,7 +52,7 @@ export function generateProductionScenario(): ProductionScenario {
 }
 
 // Generate a specified number of production scenarios
-export function generateProductionScenarios(count: number = SAMPLES): ProductionScenario[] {
+export function generateProductionScenarios(count: number = SAMPLES, dataSource: string = 'random'): ProductionScenario[] {
   const scenarios: ProductionScenario[] = [];
   for (let i = 0; i < count; i++) {
     scenarios.push(generateProductionScenario());

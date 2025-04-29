@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ProductionScenario, OrderSchedule, SAMPLES } from '../types';
 import { generateProductionScenarios } from '../utils/dataGenerator';
-import { calculateOrderSchedules } from '../utils/algorithm';
+import { calculateOrderSchedules } from '../utils/reorderAlgorithm';
 import OrderScheduleTable from '../components/OrderScheduleTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';

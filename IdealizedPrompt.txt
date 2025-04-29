@@ -30,5 +30,10 @@ Create a reorder algorithm scheduling application with these features:
 
 6. Include a legend explaining the color-coding system.
 
-The application should help manufacturing planners visualize and optimize their ordering strategies to maintain ideal inventory levels while meeting production requirements.
+7. Organize code with:
+   - Separate files for each algorithm implementation
+   - Main algorithm file that coordinates the calculations
+   - Proper TypeScript types and interfaces
+   - Clean, maintainable structure with focused components
 
+The application should help manufacturing planners visualize and optimize their ordering strategies to maintain ideal inventory levels while meeting production requirements.
