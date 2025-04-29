@@ -18,11 +18,23 @@ function generateMPN(): string {
 
 // Generate a random production scenario
 function generateProductionScenario(): ProductionScenario {
-  // Generate core properties
-  const invTgt = randomInt(10, 200);
-  const sstok = Math.min(randomInt(0, 10), Math.floor(invTgt * 0.05));
-  const moq = randomInt(2, 100);
-  const pkQty = Math.min(randomInt(2, 20), Math.floor(moq / 5));
+  // Generate core properties with new constraints
+  // InvTgt is a whole integer multiple of 10
+  const invTgt = randomInt(2, 20) * 10; // 20 to 200 in steps of 10
+  
+  // SStok is less than 20 percent of InvTgt
+  const maxSStok = Math.floor(invTgt * 0.2);
+  const sstok = randomInt(0, maxSStok);
+  
+  // MOQ is a whole integer multiple of 10
+  const moq = randomInt(1, 10) * 10; // 10 to 100 in steps of 10
+  
+  // PkQty is a whole integer multiple of 5 and is less than MOQ
+  const maxPkQtyMultiplier = Math.floor(moq / 5);
+  const pkQty = maxPkQtyMultiplier > 0 ? randomInt(1, maxPkQtyMultiplier) * 5 : 5;
+  
+  // LdTm is a whole integer between 1 and 4 inclusive
+  const ldTm = randomInt(1, 4);
   
   // Generate weeks of data
   const rqt = Array(PERIODS + 1).fill(0).map(() => randomInt(0, 400));
@@ -42,7 +54,7 @@ function generateProductionScenario(): ProductionScenario {
     MPN: generateMPN(),
     InvTgt: invTgt,
     SStok: sstok,
-    LdTm: randomInt(1, 5),
+    LdTm: ldTm,
     MOQ: moq,
     PkQty: pkQty,
     Rqt: rqt,
