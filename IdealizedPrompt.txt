@@ -7,21 +7,28 @@ Create a reorder algorithm scheduling application with these features:
    - Scheduled receiving (Rec)
    - Manufacturing parameters (MOQ, PkQty, LdTm, InvTgt, SStok)
 
-2. The algorithm should:
+2. Include multiple algorithm implementations:
+   - A mock algorithm that generates random order quantities
+   - An intelligent algorithm that optimizes inventory using lead times and minimums
+   - Two placeholder algorithms for future implementation
+
+3. The algorithms should:
    - Calculate optimal order quantities considering lead times and minimums
    - Avoid production halts due to inventory shortages
    - Prevent excessive inventory (>3x target for multiple weeks)
    - Aim to keep inventory close to target + safety stock levels
 
-3. Build a React UI with:
+4. Build a React UI with:
    - A table showing both input scenarios and calculated schedules
    - Color-coding for inventory status (zero, below safety stock, excessive)
    - Visual indication of orders and receiving
    - Clear section headings and organized data display
+   - Dropdown selectors for data source and algorithm selection
    - Ability to generate new random data for testing
 
-4. Use shadcn/ui components for a clean, professional interface.
+5. Use shadcn/ui components for a clean, professional interface.
 
-5. Include a legend explaining the color-coding system.
+6. Include a legend explaining the color-coding system.
 
 The application should help manufacturing planners visualize and optimize their ordering strategies to maintain ideal inventory levels while meeting production requirements.
+

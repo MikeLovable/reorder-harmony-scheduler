@@ -6,31 +6,64 @@ import { calculateOrderSchedules } from '../utils/algorithm';
 import OrderScheduleTable from '../components/OrderScheduleTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'Algo3';
+type DataSourceType = 'Random' | 'Customer' | 'Set1';
 
 const Index = () => {
   const [scenarios, setScenarios] = useState<ProductionScenario[]>([]);
   const [schedules, setSchedules] = useState<OrderSchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
+  const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
 
   const generateData = () => {
     setLoading(true);
-    const newScenarios = generateProductionScenarios(SAMPLES);
+    
+    // Generate scenarios based on dataSource selection
+    let newScenarios: ProductionScenario[];
+    
+    switch (dataSource) {
+      case 'Random':
+        newScenarios = generateProductionScenarios(SAMPLES, 'random');
+        break;
+      case 'Set1':
+        newScenarios = generateProductionScenarios(SAMPLES, 'set1');
+        break;
+      case 'Customer':
+      default:
+        newScenarios = generateProductionScenarios(SAMPLES, 'customer');
+        break;
+    }
+    
     setScenarios(newScenarios);
-    const newSchedules = calculateOrderSchedules(newScenarios);
+    
+    // Calculate schedules using the selected algorithm
+    const newSchedules = calculateOrderSchedules(newScenarios, algorithmType);
     setSchedules(newSchedules);
+    
     setLoading(false);
   };
 
   useEffect(() => {
     generateData();
-  }, []);
+  }, [algorithmType, dataSource]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-[95%] mx-auto">
         <Card className="mb-8">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <CardTitle className="text-2xl font-bold text-gray-800">
                   Reorder Algorithm Scheduler
@@ -39,13 +72,48 @@ const Index = () => {
                   Optimizing inventory levels for manufacturing parts
                 </CardDescription>
               </div>
-              <Button 
-                onClick={generateData} 
-                disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {loading ? "Calculating..." : "Generate New Data"}
-              </Button>
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                <div className="w-full sm:w-48">
+                  <Select value={dataSource} onValueChange={(value: DataSourceType) => setDataSource(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Data Source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Data Source</SelectLabel>
+                        <SelectItem value="Random">Random</SelectItem>
+                        <SelectItem value="Customer">Customer</SelectItem>
+                        <SelectItem value="Set1">Set1</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-full sm:w-48">
+                  <Select value={algorithmType} onValueChange={(value: AlgorithmType) => setAlgorithmType(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Algorithm" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Algorithm</SelectLabel>
+                        <SelectItem value="Mock">Mock</SelectItem>
+                        <SelectItem value="Algo1">Algo1</SelectItem>
+                        <SelectItem value="Algo2">Algo2</SelectItem>
+                        <SelectItem value="Algo3">Algo3</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button 
+                  onClick={generateData} 
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+                >
+                  {loading ? "Calculating..." : "Generate New Data"}
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
