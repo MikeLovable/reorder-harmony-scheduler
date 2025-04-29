@@ -1,5 +1,5 @@
 
-import { ProductionScenario } from "../types";
+import { PERIODS, SAMPLES, ProductionScenario } from "../types";
 
 // Helper function to generate a random integer between min and max (inclusive)
 function randomInt(min: number, max: number): number {
@@ -20,25 +20,25 @@ function generateMPN(): string {
 export function generateProductionScenario(): ProductionScenario {
   // Generate core properties
   const invTgt = randomInt(10, 200);
-  const sstok = randomInt(0, Math.floor(invTgt * 0.05));
+  const sstok = Math.min(randomInt(0, 10), Math.floor(invTgt * 0.05));
   const moq = randomInt(2, 100);
-  const pkQty = randomInt(2, Math.floor(moq / 5));
+  const pkQty = Math.min(randomInt(2, 20), Math.floor(moq / 5));
   
   // Generate weeks of data
-  const weeks = 13; // 0 through 12
-  const rqt = Array(weeks).fill(0).map(() => randomInt(0, 400));
-  const rec = Array(weeks).fill(0).map(() => randomInt(0, 400));
+  const rqt = Array(PERIODS + 1).fill(0).map(() => randomInt(0, 400));
+  const rec = Array(PERIODS + 1).fill(0).map(() => randomInt(0, 200));
   
   // Generate inventory - starting with a reasonable value
-  const inv = Array(weeks).fill(0);
+  const inv = Array(PERIODS + 1).fill(0);
   inv[0] = randomInt(invTgt - sstok, invTgt + sstok); // Start with inventory near target
   
   // Calculate inventory for subsequent weeks based on requirements and receipts
-  for (let i = 1; i < weeks; i++) {
+  for (let i = 1; i <= PERIODS; i++) {
     inv[i] = Math.max(0, inv[i-1] + rec[i-1] - rqt[i-1]);
   }
   
   return {
+    Sel: false,
     MPN: generateMPN(),
     InvTgt: invTgt,
     SStok: sstok,
@@ -52,7 +52,7 @@ export function generateProductionScenario(): ProductionScenario {
 }
 
 // Generate a specified number of production scenarios
-export function generateProductionScenarios(count: number): ProductionScenario[] {
+export function generateProductionScenarios(count: number = SAMPLES): ProductionScenario[] {
   const scenarios: ProductionScenario[] = [];
   for (let i = 0; i < count; i++) {
     scenarios.push(generateProductionScenario());

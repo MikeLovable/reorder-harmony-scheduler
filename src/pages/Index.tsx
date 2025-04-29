@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { ProductionScenario, OrderSchedule } from '../types';
+import { ProductionScenario, OrderSchedule, SAMPLES } from '../types';
 import { generateProductionScenarios } from '../utils/dataGenerator';
-import { calculateOrderSchedule } from '../utils/reorderAlgorithm';
+import { calculateOrderSchedules } from '../utils/algorithm';
 import OrderScheduleTable from '../components/OrderScheduleTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,9 +14,9 @@ const Index = () => {
 
   const generateData = () => {
     setLoading(true);
-    const newScenarios = generateProductionScenarios(100);
+    const newScenarios = generateProductionScenarios(SAMPLES);
     setScenarios(newScenarios);
-    const newSchedules = newScenarios.map(scenario => calculateOrderSchedule(scenario));
+    const newSchedules = calculateOrderSchedules(newScenarios);
     setSchedules(newSchedules);
     setLoading(false);
   };
@@ -68,15 +68,11 @@ const Index = () => {
                     </div>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-yellow-100 mr-2"></div>
-                      <span>Below safety stock</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 bg-blue-100 mr-2"></div>
-                      <span>Excessive inventory (>3x target)</span>
+                      <span>Excessive inventory (&gt;3x target)</span>
                     </div>
                     <div className="flex items-center">
                       <div className="w-4 h-4 bg-green-50 mr-2"></div>
-                      <span>Order placed</span>
+                      <span>Order placed or receiving</span>
                     </div>
                   </div>
                 </div>

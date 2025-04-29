@@ -10,14 +10,15 @@ interface TableRowProps {
 }
 
 const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
-  const getMPNAttributes = (scenario: ProductionScenario): string => {
-    return `InvTgt[${scenario.InvTgt}] SStok[${scenario.SStok}] LdTm[${scenario.LdTm}] MOQ[${scenario.MOQ}] PkQty[${scenario.PkQty}]`;
+  const getMPNAttributes = (schedule: OrderSchedule): string => {
+    return `LdTm[${schedule.LdTm}], MOQ[${schedule.MOQ}],
+PkQty[${schedule.PkQty}],
+InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
   };
   
-  const getInvCellColor = (inv: number, invTgt: number, sstok: number): string => {
+  const getInvCellColor = (inv: number, invTgt: number): string => {
     if (inv === 0) return 'bg-red-100';
-    if (inv < sstok) return 'bg-yellow-100';
-    if (inv > invTgt * 3) return 'bg-blue-100';
+    if (inv > invTgt * 3) return 'bg-yellow-100';
     return '';
   };
 
@@ -30,12 +31,12 @@ const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
     <>
       {/* Input Requirements Row */}
       <ShadcnTableRow>
-        <TableCell rowSpan={2} className={headerCellStyle}>{scenario.MPN}</TableCell>
-        <TableCell rowSpan={2} className={headerCellStyle}>{getMPNAttributes(scenario)}</TableCell>
-        <TableCell rowSpan={2} className={headerCellStyle}>{schedule.Notes}</TableCell>
-        <TableCell rowSpan={2} className={directionCellStyle}>In</TableCell>
+        <TableCell rowSpan={3} className={headerCellStyle}>{schedule.MPN}</TableCell>
+        <TableCell rowSpan={3} className={headerCellStyle}>{getMPNAttributes(schedule)}</TableCell>
+        <TableCell rowSpan={3} className={headerCellStyle}>{schedule.Notes}</TableCell>
+        <TableCell rowSpan={3} className={directionCellStyle}>In</TableCell>
         <TableCell className={headerCellStyle}>Rqt</TableCell>
-        {scenario.Rqt.map((val, i) => (
+        {schedule.Rqt.map((val, i) => (
           <TableCell key={`in-rqt-${i}`} className={cellStyle}>{val}</TableCell>
         ))}
       </ShadcnTableRow>
@@ -43,15 +44,24 @@ const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
       {/* Input Receiving Row */}
       <ShadcnTableRow>
         <TableCell className={headerCellStyle}>Rec</TableCell>
-        {scenario.Rec.map((val, i) => (
+        {schedule.InRec.map((val, i) => (
           <TableCell key={`in-rec-${i}`} className={cellStyle}>{val}</TableCell>
+        ))}
+      </ShadcnTableRow>
+
+      {/* Input Inventory Row */}
+      <ShadcnTableRow>
+        <TableCell className={headerCellStyle}>Inv</TableCell>
+        {/* We don't have Inv values in the input scenario, so we'll show N/A */}
+        {schedule.Rqt.map((_, i) => (
+          <TableCell key={`in-inv-${i}`} className={cellStyle}>N/A</TableCell>
         ))}
       </ShadcnTableRow>
 
       {/* Output Requirements Row */}
       <ShadcnTableRow>
-        <TableCell rowSpan={4} className={headerCellStyle}>{scenario.MPN}</TableCell>
-        <TableCell rowSpan={4} className={headerCellStyle}>{getMPNAttributes(scenario)}</TableCell>
+        <TableCell rowSpan={4} className={headerCellStyle}>{schedule.MPN}</TableCell>
+        <TableCell rowSpan={4} className={headerCellStyle}>{getMPNAttributes(schedule)}</TableCell>
         <TableCell rowSpan={4} className={headerCellStyle}>{schedule.Notes}</TableCell>
         <TableCell rowSpan={4} className={directionCellStyle}>Out</TableCell>
         <TableCell className={headerCellStyle}>Rqt</TableCell>
@@ -65,7 +75,7 @@ const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
         <TableCell className={headerCellStyle}>Ord</TableCell>
         {schedule.Ord.map((val, i) => (
           <TableCell key={`out-ord-${i}`} className={cn(cellStyle, val > 0 && "font-bold bg-green-50")}>
-            {val}
+            {val > 0 ? val : ""}
           </TableCell>
         ))}
       </ShadcnTableRow>
@@ -74,7 +84,9 @@ const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
       <ShadcnTableRow>
         <TableCell className={headerCellStyle}>Rec</TableCell>
         {schedule.Rec.map((val, i) => (
-          <TableCell key={`out-rec-${i}`} className={cellStyle}>{val}</TableCell>
+          <TableCell key={`out-rec-${i}`} className={cn(cellStyle, val > 0 && "bg-green-50")}>
+            {val > 0 ? val : ""}
+          </TableCell>
         ))}
       </ShadcnTableRow>
 
@@ -84,7 +96,7 @@ const TableRow: React.FC<TableRowProps> = ({ scenario, schedule }) => {
         {schedule.Inv.map((val, i) => (
           <TableCell 
             key={`out-inv-${i}`} 
-            className={cn(cellStyle, getInvCellColor(val, scenario.InvTgt, scenario.SStok))}
+            className={cn(cellStyle, getInvCellColor(val, schedule.InvTgt))}
           >
             {val}
           </TableCell>

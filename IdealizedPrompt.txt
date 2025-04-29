@@ -15,10 +15,10 @@ Create a reorder algorithm scheduling application with these features:
 
 3. Build a React UI with:
    - A table showing both input scenarios and calculated schedules
-   - Color-coding for inventory status (zero, below safety stock, excessive, high)
-   - Pagination for better data browsing
-   - Ability to generate new random data for testing
+   - Color-coding for inventory status (zero, below safety stock, excessive)
+   - Visual indication of orders and receiving
    - Clear section headings and organized data display
+   - Ability to generate new random data for testing
 
 4. Use shadcn/ui components for a clean, professional interface.
 
