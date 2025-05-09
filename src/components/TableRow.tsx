@@ -31,9 +31,9 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
     <>
       {/* Input Requirements Row */}
       <ShadcnTableRow>
-        <TableCell rowSpan={6} className={headerCellStyle}>{schedule.MPN}</TableCell>
-        <TableCell rowSpan={6} className={headerCellStyle}>{getMPNAttributes(schedule)}</TableCell>
-        <TableCell rowSpan={6} className={headerCellStyle}>{schedule.Notes}</TableCell>
+        <TableCell rowSpan={7} className={headerCellStyle}>{schedule.MPN}</TableCell>
+        <TableCell rowSpan={7} className={headerCellStyle}>{getMPNAttributes(schedule)}</TableCell>
+        <TableCell rowSpan={7} className={headerCellStyle}>{schedule.Notes}</TableCell>
         <TableCell rowSpan={3} className={directionCellStyle}>In</TableCell>
         <TableCell className={headerCellStyle}>Rqt</TableCell>
         {schedule.Rqt.map((val, i) => (
