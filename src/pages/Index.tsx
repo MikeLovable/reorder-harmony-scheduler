@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { ProductionScenario, OrderSchedule, SAMPLES } from '../types';
 import { generateProductionScenarios } from '../utils/dataGenerator';
@@ -21,6 +20,22 @@ import { toast } from "@/components/ui/use-toast";
 type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'Algo3';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
 
+// Helper function to get cookie
+const getCookie = (name: string): string => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
+  return '';
+};
+
+// Helper function to set cookie
+const setCookie = (name: string, value: string, days = 365): void => {
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = `expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value}; ${expires}; path=/`;
+};
+
 const Index = () => {
   const [scenarios, setScenarios] = useState<ProductionScenario[]>([]);
   const [schedules, setSchedules] = useState<OrderSchedule[]>([]);
@@ -28,7 +43,20 @@ const Index = () => {
   const [apiLoading, setApiLoading] = useState<boolean>(false);
   const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
   const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
-  const [apiUrl, setApiUrl] = useState<string>("https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod");
+  const [apiUrl, setApiUrl] = useState<string>("");
+  
+  // Load API URL from cookie on component mount
+  useEffect(() => {
+    const savedApiUrl = getCookie('apiUrl');
+    setApiUrl(savedApiUrl || "https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod");
+  }, []);
+  
+  // Save API URL to cookie whenever it changes
+  useEffect(() => {
+    if (apiUrl) {
+      setCookie('apiUrl', apiUrl);
+    }
+  }, [apiUrl]);
   
   const generateData = () => {
     setLoading(true);
