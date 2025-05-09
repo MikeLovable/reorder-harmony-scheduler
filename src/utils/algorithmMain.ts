@@ -4,7 +4,7 @@ import { ProductionScenario, OrderSchedule, ProductionScenarioArray, OrderSchedu
 import { lookAheadOptimizeMOCK } from './lookAheadOptimizeMOCK';
 import { lookAheadOptimizeAlgo1 } from './lookAheadOptimizeAlgo1';
 import { lookAheadOptimizeAlgo2 } from './lookAheadOptimizeAlgo2';
-import { lookAheadOptimizeAlgo3 } from './lookAheadOptimizeAlgo3';
+import { lookAheadOptimizeAlgoRealistic } from './lookAheadOptimizeAlgoRealistic';
 
 /**
  * Calculates order schedules for an array of production scenarios
@@ -14,7 +14,7 @@ import { lookAheadOptimizeAlgo3 } from './lookAheadOptimizeAlgo3';
  */
 export function calculateOrderSchedules(
   scenarios: ProductionScenarioArray,
-  algorithmType: 'Mock' | 'Algo1' | 'Algo2' | 'Algo3' = 'Mock'
+  algorithmType: 'Mock' | 'Algo1' | 'Algo2' | 'AlgoRealistic' = 'Mock'
 ): OrderScheduleArray {
   return scenarios.map(scenario => calculateOrderSchedule(scenario, algorithmType));
 }
@@ -27,7 +27,7 @@ export function calculateOrderSchedules(
  */
 export function calculateOrderSchedule(
   scenario: ProductionScenario,
-  algorithmType: 'Mock' | 'Algo1' | 'Algo2' | 'Algo3' = 'Mock'
+  algorithmType: 'Mock' | 'Algo1' | 'Algo2' | 'AlgoRealistic' = 'Mock'
 ): OrderSchedule {
   const { MPN, InvTgt, SStok, LdTm, MOQ, PkQty, Rqt, Rec, Inv } = scenario;
   
@@ -55,8 +55,8 @@ export function calculateOrderSchedule(
     case 'Algo2':
       orderSchedule.Ord = lookAheadOptimizeAlgo2(scenario);
       break;
-    case 'Algo3':
-      orderSchedule.Ord = lookAheadOptimizeAlgo3(scenario);
+    case 'AlgoRealistic':
+      orderSchedule.Ord = lookAheadOptimizeAlgoRealistic(scenario);
       break;
     case 'Mock':
     default:

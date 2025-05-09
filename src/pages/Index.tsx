@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 
-type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'Algo3';
+type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'AlgoRealistic';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
 
 // Helper function to get cookie
@@ -41,6 +41,7 @@ const Index = () => {
   const [schedules, setSchedules] = useState<OrderSchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  
   const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
   const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
   const [apiUrl, setApiUrl] = useState<string>("");
@@ -170,7 +171,7 @@ const Index = () => {
                         <SelectItem value="Mock">Mock</SelectItem>
                         <SelectItem value="Algo1">Algo1</SelectItem>
                         <SelectItem value="Algo2">Algo2</SelectItem>
-                        <SelectItem value="Algo3">Algo3</SelectItem>
+                        <SelectItem value="AlgoRealistic">AlgoRealistic</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>

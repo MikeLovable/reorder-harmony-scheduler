@@ -5,7 +5,7 @@ import * as algorithmMain from "./algorithmMain";
 import { lookAheadOptimizeMOCK } from "./lookAheadOptimizeMOCK";
 import { lookAheadOptimizeAlgo1 } from "./lookAheadOptimizeAlgo1";
 import { lookAheadOptimizeAlgo2 } from "./lookAheadOptimizeAlgo2";
-import { lookAheadOptimizeAlgo3 } from "./lookAheadOptimizeAlgo3";
+import { lookAheadOptimizeAlgoRealistic } from "./lookAheadOptimizeAlgoRealistic";
 
 // Re-export the functions
 export const calculateOrderSchedule = algorithmMain.calculateOrderSchedule;
@@ -14,5 +14,5 @@ export {
   lookAheadOptimizeMOCK,
   lookAheadOptimizeAlgo1,
   lookAheadOptimizeAlgo2,
-  lookAheadOptimizeAlgo3
+  lookAheadOptimizeAlgoRealistic
 };
