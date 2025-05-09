@@ -29,7 +29,7 @@ export function calculateOrderSchedule(
   scenario: ProductionScenario,
   algorithmType: 'Mock' | 'Algo1' | 'Algo2' | 'Algo3' = 'Mock'
 ): OrderSchedule {
-  const { MPN, InvTgt, SStok, LdTm, MOQ, PkQty, Rqt, Rec } = scenario;
+  const { MPN, InvTgt, SStok, LdTm, MOQ, PkQty, Rqt, Rec, Inv } = scenario;
   
   // Initialize the output OrderSchedule
   const orderSchedule: OrderSchedule = {
@@ -82,8 +82,8 @@ export function calculateOrderSchedule(
   }
 
   // Calculate inventory levels
-  // Start with initial inventory (first week)
-  orderSchedule.Inv[0] = scenario.Inv ? scenario.Inv[0] : InvTgt;  // Default to target if not provided
+  // Start with initial inventory (first week) from the input scenario
+  orderSchedule.Inv[0] = scenario.Inv ? scenario.Inv[0] : InvTgt;  // Use scenario inventory or default to target
   
   // Calculate inventory for the rest of the weeks
   for (let week = 1; week <= PERIODS; week++) {

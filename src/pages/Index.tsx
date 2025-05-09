@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import { api } from "../api/api";
 
 type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'Algo3';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
@@ -23,6 +25,7 @@ const Index = () => {
   const [scenarios, setScenarios] = useState<ProductionScenario[]>([]);
   const [schedules, setSchedules] = useState<OrderSchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
   const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
   const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
 
@@ -52,6 +55,33 @@ const Index = () => {
     setSchedules(newSchedules);
     
     setLoading(false);
+  };
+
+  const simulateViaApi = async () => {
+    try {
+      setApiLoading(true);
+      const result = await api.simulateOrders(dataSource, algorithmType);
+      
+      if (result.scenarios && result.schedules) {
+        setScenarios(result.scenarios);
+        setSchedules(result.schedules);
+        toast({
+          title: "API simulation completed",
+          description: `Successfully processed ${result.schedules.length} schedules`,
+        });
+      } else {
+        throw new Error("Invalid response from API");
+      }
+    } catch (error) {
+      console.error("API simulation error:", error);
+      toast({
+        title: "API Error",
+        description: "Failed to simulate orders via API. Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setApiLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -106,20 +136,32 @@ const Index = () => {
                   </Select>
                 </div>
                 
-                <Button 
-                  onClick={generateData} 
-                  disabled={loading}
-                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
-                >
-                  {loading ? "Calculating..." : "Generate New Data"}
-                </Button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button 
+                    onClick={generateData} 
+                    disabled={loading}
+                    className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-auto"
+                  >
+                    {loading ? "Calculating..." : "Run Algorithm Locally"}
+                  </Button>
+                  
+                  <Button 
+                    onClick={simulateViaApi} 
+                    disabled={apiLoading}
+                    className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-auto"
+                  >
+                    {apiLoading ? "Simulating..." : "Simulate Via API"}
+                  </Button>
+                </div>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            {loading ? (
+            {loading || apiLoading ? (
               <div className="flex justify-center items-center h-64">
-                <p className="text-xl text-gray-500">Loading data...</p>
+                <p className="text-xl text-gray-500">
+                  {apiLoading ? "Simulating via API..." : "Calculating locally..."}
+                </p>
               </div>
             ) : (
               <>
