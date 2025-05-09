@@ -6,6 +6,7 @@ import { calculateOrderSchedules } from '../utils/reorderAlgorithm';
 import OrderScheduleTable from '../components/OrderScheduleTable';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -16,7 +17,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { api } from "../api/api";
 
 type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'Algo3';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
@@ -28,7 +28,8 @@ const Index = () => {
   const [apiLoading, setApiLoading] = useState<boolean>(false);
   const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
   const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
-
+  const [apiUrl, setApiUrl] = useState<string>("https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod");
+  
   const generateData = () => {
     setLoading(true);
     
@@ -60,7 +61,18 @@ const Index = () => {
   const simulateViaApi = async () => {
     try {
       setApiLoading(true);
-      const result = await api.simulateOrders(dataSource, algorithmType);
+      const response = await fetch(`${apiUrl}/SimulateOrders?DataSource=${dataSource}&AlgorithmType=${algorithmType}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const result = await response.json();
       
       if (result.scenarios && result.schedules) {
         setScenarios(result.scenarios);
@@ -157,6 +169,20 @@ const Index = () => {
             </div>
           </CardHeader>
           <CardContent>
+            <div className="mb-4">
+              <label htmlFor="api-url" className="block text-sm font-medium text-gray-700 mb-1">
+                API URL
+              </label>
+              <Input
+                id="api-url"
+                type="text"
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
+                className="w-full"
+                placeholder="Enter API Gateway URL"
+              />
+            </div>
+            
             {loading || apiLoading ? (
               <div className="flex justify-center items-center h-64">
                 <p className="text-xl text-gray-500">

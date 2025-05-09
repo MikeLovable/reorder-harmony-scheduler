@@ -34,7 +34,7 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
         <TableCell rowSpan={6} className={headerCellStyle}>{schedule.MPN}</TableCell>
         <TableCell rowSpan={6} className={headerCellStyle}>{getMPNAttributes(schedule)}</TableCell>
         <TableCell rowSpan={6} className={headerCellStyle}>{schedule.Notes}</TableCell>
-        <TableCell className={directionCellStyle}>In</TableCell>
+        <TableCell rowSpan={3} className={directionCellStyle}>In</TableCell>
         <TableCell className={headerCellStyle}>Rqt</TableCell>
         {schedule.Rqt.map((val, i) => (
           <TableCell key={`in-rqt-${i}`} className={cellStyle}>{val}</TableCell>
@@ -43,7 +43,6 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Input Receiving Row */}
       <ShadcnTableRow>
-        <TableCell className={directionCellStyle}>In</TableCell>
         <TableCell className={headerCellStyle}>Rec</TableCell>
         {schedule.InRec.map((val, i) => (
           <TableCell key={`in-rec-${i}`} className={cellStyle}>{val}</TableCell>
@@ -52,7 +51,6 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Input Inventory Row */}
       <ShadcnTableRow>
-        <TableCell className={directionCellStyle}>In</TableCell>
         <TableCell className={headerCellStyle}>Inv</TableCell>
         {schedule.Rqt.map((_, i) => (
           <TableCell key={`in-inv-${i}`} className={cellStyle}>
@@ -63,7 +61,7 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Output Requirements Row */}
       <ShadcnTableRow>
-        <TableCell className={directionCellStyle}>Out</TableCell>
+        <TableCell rowSpan={4} className={directionCellStyle}>Out</TableCell>
         <TableCell className={headerCellStyle}>Rqt</TableCell>
         {schedule.Rqt.map((val, i) => (
           <TableCell key={`out-rqt-${i}`} className={cellStyle}>{val}</TableCell>
@@ -72,7 +70,6 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Output Orders Row */}
       <ShadcnTableRow>
-        <TableCell className={directionCellStyle}>Out</TableCell>
         <TableCell className={headerCellStyle}>Ord</TableCell>
         {schedule.Ord.map((val, i) => (
           <TableCell key={`out-ord-${i}`} className={cn(cellStyle, val > 0 && "font-bold bg-green-50")}>
@@ -83,7 +80,6 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Output Receiving Row */}
       <ShadcnTableRow>
-        <TableCell className={directionCellStyle}>Out</TableCell>
         <TableCell className={headerCellStyle}>Rec</TableCell>
         {schedule.Rec.map((val, i) => (
           <TableCell key={`out-rec-${i}`} className={cn(cellStyle, val > 0 && "bg-green-50")}>
@@ -94,7 +90,6 @@ InvTgt[${schedule.InvTgt}], SStok[${schedule.SStok}]`;
 
       {/* Output Inventory Row */}
       <ShadcnTableRow className="border-b-2">
-        <TableCell className={directionCellStyle}>Out</TableCell>
         <TableCell className={headerCellStyle}>Inv</TableCell>
         {schedule.Inv.map((val, i) => (
           <TableCell 

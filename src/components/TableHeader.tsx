@@ -4,13 +4,13 @@ import { TableHead, TableRow } from '@/components/ui/table';
 import { PERIODS } from '../types';
 
 const TableHeader: React.FC = () => {
-  const weeks = Array.from({ length: PERIODS + 1 }, (_, i) => i);
+  const weeks = Array.from({ length: PERIODS }, (_, i) => i);
 
   return (
     <TableRow>
-      <TableHead rowSpan={6} className="border px-2 py-1 font-medium">MPN</TableHead>
-      <TableHead rowSpan={6} className="border px-2 py-1 font-medium">MPN Attributes</TableHead>
-      <TableHead rowSpan={6} className="border px-2 py-1 font-medium">Notes</TableHead>
+      <TableHead className="border px-2 py-1 font-medium">MPN</TableHead>
+      <TableHead className="border px-2 py-1 font-medium">MPN Attributes</TableHead>
+      <TableHead className="border px-2 py-1 font-medium">Notes</TableHead>
       <TableHead className="border px-2 py-1 font-medium">Dir</TableHead>
       <TableHead className="border px-2 py-1 font-medium">KPI</TableHead>
       {weeks.map((week) => (
