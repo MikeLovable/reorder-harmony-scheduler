@@ -13,6 +13,8 @@ import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as child_process from 'child_process';
 
 /**
  * Props for the AutoOrderStack
@@ -175,6 +177,33 @@ export class AutoOrderStack extends cdk.Stack {
         ),
       });
     }
+    
+    // Build and deploy React app to S3
+    // First, get the project root directory
+    const projectDir = path.join(__dirname, '../../');
+    
+    // Create a deployment to S3
+    new s3deploy.BucketDeployment(this, 'DeployWebApp', {
+      sources: [
+        s3deploy.Source.asset(path.join(projectDir), {
+          bundling: {
+            image: cdk.DockerImage.fromRegistry('node:18'),
+            command: [
+              'bash', '-c', [
+                'npm install',
+                'npm run build',
+                'cp -r /asset-input/dist/* /asset-output/'
+              ].join(' && ')
+            ],
+            user: 'root'
+          }
+        })
+      ],
+      destinationBucket: websiteBucket,
+      destinationKeyPrefix: props?.originBasePath || 'app',
+      distribution,
+      distributionPaths: ['/*'],
+    });
 
     // Output the API URL
     new cdk.CfnOutput(this, 'ApiUrl', {
