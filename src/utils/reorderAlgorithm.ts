@@ -10,6 +10,8 @@ import { lookAheadOptimizeAlgoRealistic } from "./lookAheadOptimizeAlgoRealistic
 // Re-export the functions
 export const calculateOrderSchedule = algorithmMain.calculateOrderSchedule;
 export const calculateOrderSchedules = algorithmMain.calculateOrderSchedules;
+
+// Export the algorithm functions
 export { 
   lookAheadOptimizeMOCK,
   lookAheadOptimizeAlgo1,

@@ -1,5 +1,5 @@
 
-// Constants for the application
+// Constants for the application - these will be replaced by state variables
 export const PERIODS = 12;
 export const SAMPLES = 20;
 

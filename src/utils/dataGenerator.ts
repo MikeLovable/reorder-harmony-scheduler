@@ -1,5 +1,5 @@
 
-import { PERIODS, SAMPLES, ProductionScenario } from "../types";
+import { ProductionScenario } from "../types";
 
 // Helper function to generate a random integer between min and max (inclusive)
 function randomInt(min: number, max: number): number {
@@ -17,7 +17,7 @@ function generateMPN(): string {
 }
 
 // Generate a random production scenario
-function generateProductionScenario(): ProductionScenario {
+function generateProductionScenario(periods: number): ProductionScenario {
   // Generate core properties with new constraints
   // InvTgt is a whole integer multiple of 10
   const invTgt = randomInt(2, 20) * 10; // 20 to 200 in steps of 10
@@ -37,15 +37,15 @@ function generateProductionScenario(): ProductionScenario {
   const ldTm = randomInt(1, 4);
   
   // Generate weeks of data
-  const rqt = Array(PERIODS + 1).fill(0).map(() => randomInt(0, 400));
-  const rec = Array(PERIODS + 1).fill(0).map(() => randomInt(0, 200));
+  const rqt = Array(periods + 1).fill(0).map(() => randomInt(0, 400));
+  const rec = Array(periods + 1).fill(0).map(() => randomInt(0, 200));
   
   // Generate inventory - starting with a reasonable value
-  const inv = Array(PERIODS + 1).fill(0);
+  const inv = Array(periods + 1).fill(0);
   inv[0] = randomInt(invTgt - sstok, invTgt + sstok); // Start with inventory near target
   
   // Calculate inventory for subsequent weeks based on requirements and receipts
-  for (let i = 1; i <= PERIODS; i++) {
+  for (let i = 1; i <= periods; i++) {
     inv[i] = Math.max(0, inv[i-1] + rec[i-1] - rqt[i-1]);
   }
   
@@ -64,10 +64,10 @@ function generateProductionScenario(): ProductionScenario {
 }
 
 // Generate a specified number of production scenarios
-export function generateProductionScenarios(count: number = SAMPLES, dataSource: string = 'random'): ProductionScenario[] {
+export function generateProductionScenarios(samples: number = 20, dataSource: string = 'random', periods: number = 12): ProductionScenario[] {
   const scenarios: ProductionScenario[] = [];
-  for (let i = 0; i < count; i++) {
-    scenarios.push(generateProductionScenario());
+  for (let i = 0; i < samples; i++) {
+    scenarios.push(generateProductionScenario(periods));
   }
   return scenarios;
 }

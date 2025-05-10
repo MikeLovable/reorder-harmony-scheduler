@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { PERIODS, SAMPLES, ProductionScenarioArray } from '@/types';
+import { ProductionScenarioArray } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { toast } from '@/components/ui/use-toast';
 import { generateProductionScenarios } from '@/utils/dataGenerator';
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 const algorithmDescriptions = [
   { name: 'Mock', description: 'Simple mock implementation for testing purposes.' },
@@ -17,10 +17,11 @@ const algorithmDescriptions = [
 ];
 
 const DataConfigTab: React.FC = () => {
-  const [periodsInput, setPeriodsInput] = useState<string>(PERIODS.toString());
-  const [samplesInput, setSamplesInput] = useState<string>(SAMPLES.toString());
+  const { periods, samples, setPeriods, setSamples } = useAppConfig();
+  const [periodsInput, setPeriodsInput] = useState<string>(periods.toString());
+  const [samplesInput, setSamplesInput] = useState<string>(samples.toString());
   const [customerScenarios, setCustomerScenarios] = useState<string>(() => {
-    const scenarios = generateProductionScenarios(SAMPLES, 'customer');
+    const scenarios = generateProductionScenarios(samples, 'customer');
     return JSON.stringify(scenarios, null, 2);
   });
 
@@ -35,10 +36,10 @@ const DataConfigTab: React.FC = () => {
       return;
     }
 
-    // In a production app, we would update the global state here
+    setPeriods(newPeriods);
     toast({
-        title: "Periods Updated",
-        description: `PERIODS value set to ${newPeriods}`,
+      title: "Periods Updated",
+      description: `PERIODS value set to ${newPeriods}`,
     });
   };
 
@@ -53,10 +54,10 @@ const DataConfigTab: React.FC = () => {
       return;
     }
     
-    // In a production app, we would update the global state here
+    setSamples(newSamples);
     toast({
-        title: "Samples Updated",
-        description: `SAMPLES value set to ${newSamples}`,
+      title: "Samples Updated",
+      description: `SAMPLES value set to ${newSamples}`,
     });
   };
 

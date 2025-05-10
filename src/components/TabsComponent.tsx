@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import BatchTab from './tabs/BatchTab';
 import DataConfigTab from './tabs/DataConfigTab';
@@ -12,8 +12,10 @@ interface TabsComponentProps {
 }
 
 const TabsComponent: React.FC<TabsComponentProps> = ({ apiUrl, setApiUrl }) => {
+  const [activeTab, setActiveTab] = useState<string>("Manual");
+  
   return (
-    <Tabs defaultValue="Manual" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="grid grid-cols-4 mb-4">
         <TabsTrigger value="DataConfig">Data/Config</TabsTrigger>
         <TabsTrigger value="Batch">Batch</TabsTrigger>

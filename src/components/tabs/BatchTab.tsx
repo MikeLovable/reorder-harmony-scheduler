@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ProductionScenario, OrderSchedule, SAMPLES } from '@/types';
+import { ProductionScenario, OrderSchedule } from '@/types';
 import { generateProductionScenarios } from '@/utils/dataGenerator';
 import { calculateOrderSchedules } from '@/utils/reorderAlgorithm';
 import OrderScheduleTable from '@/components/OrderScheduleTable';
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'AlgoRealistic';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
@@ -27,13 +28,15 @@ interface BatchTabProps {
 }
 
 const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
+  const { samples } = useAppConfig();
   const [scenarios, setScenarios] = useState<ProductionScenario[]>([]);
   const [schedules, setSchedules] = useState<OrderSchedule[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
   
   const [algorithmType, setAlgorithmType] = useState<AlgorithmType>('Mock');
   const [dataSource, setDataSource] = useState<DataSourceType>('Customer');
+  const [initialized, setInitialized] = useState<boolean>(false);
   
   const generateData = () => {
     setLoading(true);
@@ -43,14 +46,14 @@ const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
     
     switch (dataSource) {
       case 'Random':
-        newScenarios = generateProductionScenarios(SAMPLES, 'random');
+        newScenarios = generateProductionScenarios(samples, 'random');
         break;
       case 'Set1':
-        newScenarios = generateProductionScenarios(SAMPLES, 'set1');
+        newScenarios = generateProductionScenarios(samples, 'set1');
         break;
       case 'Customer':
       default:
-        newScenarios = generateProductionScenarios(SAMPLES, 'customer');
+        newScenarios = generateProductionScenarios(samples, 'customer');
         break;
     }
     
@@ -61,6 +64,7 @@ const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
     setSchedules(newSchedules);
     
     setLoading(false);
+    setInitialized(true);
   };
 
   const simulateViaApi = async () => {
@@ -82,6 +86,7 @@ const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
       if (result.scenarios && result.schedules) {
         setScenarios(result.scenarios);
         setSchedules(result.schedules);
+        setInitialized(true);
         toast({
           title: "API simulation completed",
           description: `Successfully processed ${result.schedules.length} schedules`,
@@ -102,8 +107,11 @@ const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
   };
 
   useEffect(() => {
-    generateData();
-  }, [algorithmType, dataSource]);
+    // Only generate data on mount if we haven't initialized yet
+    if (!initialized && !loading && !apiLoading) {
+      generateData();
+    }
+  }, []);
 
   return (
     <Card>
@@ -185,9 +193,11 @@ const BatchTab: React.FC<BatchTabProps> = ({ apiUrl, setApiUrl }) => {
           </div>
         ) : (
           <>
-            <div className="border rounded-lg overflow-x-auto">
-              <OrderScheduleTable scenarios={scenarios} schedules={schedules} />
-            </div>
+            {scenarios.length > 0 && (
+              <div className="border rounded-lg overflow-x-auto">
+                <OrderScheduleTable scenarios={scenarios} schedules={schedules} />
+              </div>
+            )}
             
             <div className="mt-6 text-sm text-gray-500 bg-white p-4 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-2">Color Legend:</h3>
