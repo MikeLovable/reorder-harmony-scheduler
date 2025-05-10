@@ -1,5 +1,6 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { updatePeriodsValue } from '@/utils/algorithmMain';
 
 interface AppConfigContextType {
   periods: number;
@@ -13,6 +14,11 @@ const AppConfigContext = createContext<AppConfigContextType | undefined>(undefin
 export const AppConfigProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [periods, setPeriods] = useState<number>(12);
   const [samples, setSamples] = useState<number>(20);
+
+  // Update algorithm periods value when context periods changes
+  useEffect(() => {
+    updatePeriodsValue(periods);
+  }, [periods]);
 
   return (
     <AppConfigContext.Provider value={{ periods, samples, setPeriods, setSamples }}>

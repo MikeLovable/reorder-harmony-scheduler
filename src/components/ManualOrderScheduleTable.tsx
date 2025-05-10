@@ -9,6 +9,7 @@ import {
 import { useManualSchedules } from '@/hooks/useManualSchedules';
 import ManualTableRow from './ManualTableRow';
 import TableHeaderComponent from './TableHeader';
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 interface ManualOrderScheduleTableProps {
   schedules: OrderSchedule[];
@@ -19,6 +20,8 @@ const ManualOrderScheduleTable: React.FC<ManualOrderScheduleTableProps> = ({
   schedules,
   onSchedulesChange
 }) => {
+  const { periods } = useAppConfig();
+  
   // Update shared context
   const { setSchedules } = useManualSchedules();
   React.useEffect(() => {

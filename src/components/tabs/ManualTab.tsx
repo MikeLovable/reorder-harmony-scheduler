@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ProductionScenario, OrderSchedule, PERIODS } from '@/types';
+import { ProductionScenario, OrderSchedule } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from "@/components/ui/use-toast";
@@ -17,6 +17,8 @@ import {
 import { calculateOrderSchedules } from '@/utils/reorderAlgorithm';
 import ProductionScenarioTable from '@/components/ProductionScenarioTable';
 import ManualOrderScheduleTable from '@/components/ManualOrderScheduleTable';
+import { generateProductionScenarios } from '@/utils/dataGenerator';
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 type AlgorithmType = 'Mock' | 'Algo1' | 'Algo2' | 'AlgoRealistic';
 type DataSourceType = 'Random' | 'Customer' | 'Set1';
@@ -26,6 +28,7 @@ interface ManualTabProps {
 }
 
 const ManualTab: React.FC<ManualTabProps> = ({ apiUrl }) => {
+  const { periods, samples } = useAppConfig();
   const [scenarios, setScenarios] = useState<ProductionScenario[]>([]);
   const [manualSchedules, setManualSchedules] = useState<OrderSchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,34 +39,52 @@ const ManualTab: React.FC<ManualTabProps> = ({ apiUrl }) => {
   const getProductionScenarios = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/GetProductionScenarios?DataSource=${dataSource}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+      // Try to get scenarios from API first
+      if (apiUrl) {
+        try {
+          const response = await fetch(`${apiUrl}/GetProductionScenarios?DataSource=${dataSource}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            // Initialize all scenarios with Sel=false
+            const scenariosWithSel = result.map((s: ProductionScenario) => ({ 
+              ...s, 
+              Sel: false 
+            }));
+            setScenarios(scenariosWithSel);
+            
+            toast({
+              title: "Production Scenarios Loaded from API",
+              description: `Successfully loaded ${scenariosWithSel.length} scenarios`,
+            });
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          console.error("Error fetching production scenarios from API:", error);
+          // Fall back to local generation
+        }
       }
-      
-      const result = await response.json();
-      // Initialize all scenarios with Sel=false
-      const scenariosWithSel = result.map((s: ProductionScenario) => ({ 
-        ...s, 
-        Sel: false 
-      }));
+
+      // If API failed or no URL, generate locally
+      const localScenarios = generateProductionScenarios(samples, dataSource.toLowerCase());
+      const scenariosWithSel = localScenarios.map(s => ({ ...s, Sel: false }));
       setScenarios(scenariosWithSel);
       
       toast({
-        title: "Production Scenarios Loaded",
-        description: `Successfully loaded ${scenariosWithSel.length} scenarios`,
+        title: "Production Scenarios Generated Locally",
+        description: `Generated ${scenariosWithSel.length} scenarios with ${periods} periods each`,
       });
     } catch (error) {
-      console.error("Error fetching production scenarios:", error);
+      console.error("Error generating production scenarios:", error);
       toast({
-        title: "API Error",
-        description: "Failed to fetch production scenarios. Check console for details.",
+        title: "Error",
+        description: "Failed to get production scenarios. Check console for details.",
         variant: "destructive",
       });
     } finally {
@@ -71,7 +92,7 @@ const ManualTab: React.FC<ManualTabProps> = ({ apiUrl }) => {
     }
   };
 
-  const runAlgorithm = () => {
+  const runAlgorithm = async () => {
     const selectedScenarios = scenarios.filter(s => s.Sel);
     
     if (selectedScenarios.length === 0) {
@@ -85,12 +106,43 @@ const ManualTab: React.FC<ManualTabProps> = ({ apiUrl }) => {
 
     setLoading(true);
     try {
-      // Run the algorithm on selected scenarios
+      // Try to calculate schedules from API first
+      if (apiUrl) {
+        try {
+          const response = await fetch(`${apiUrl}/GetOrders`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              scenarios: selectedScenarios, 
+              algorithmType 
+            }),
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            setManualSchedules(result);
+            
+            toast({
+              title: "Order Schedules Calculated via API",
+              description: `Created ${result.length} order schedules`,
+            });
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          console.error("Error calculating order schedules from API:", error);
+          // Fall back to local calculation
+        }
+      }
+
+      // If API failed or no URL, calculate locally
       const newSchedules = calculateOrderSchedules(selectedScenarios, algorithmType);
       setManualSchedules(newSchedules);
       
       toast({
-        title: "Algorithm Executed",
+        title: "Order Schedules Calculated Locally",
         description: `Created ${newSchedules.length} order schedules`,
       });
     } catch (error) {

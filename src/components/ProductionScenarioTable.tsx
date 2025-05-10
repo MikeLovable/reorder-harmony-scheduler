@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ProductionScenario, PERIODS } from '@/types';
+import { ProductionScenario } from '@/types';
 import { 
   Table,
   TableHeader,
@@ -10,6 +10,7 @@ import {
   TableCell
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useAppConfig } from '@/hooks/useAppConfig';
 
 interface ProductionScenarioTableProps {
   scenarios: ProductionScenario[];
@@ -24,7 +25,8 @@ const ProductionScenarioTable: React.FC<ProductionScenarioTableProps> = ({
   onSelectAllChange,
   onScenarioSelectChange
 }) => {
-  const weeks = Array.from({ length: PERIODS }, (_, i) => i);
+  const { periods } = useAppConfig();
+  const weeks = Array.from({ length: periods }, (_, i) => i);
 
   return (
     <Table>
@@ -87,7 +89,7 @@ InvTgt[${scenario.InvTgt}], SStok[${scenario.SStok}]`}
               {scenario.Inv ? scenario.Inv.map((val, i) => (
                 <TableCell key={`inv-${i}`} className="border px-2 py-1 text-sm text-right">{val}</TableCell>
               )) : (
-                Array(PERIODS + 1).fill(0).map((_, i) => (
+                Array(periods + 1).fill(0).map((_, i) => (
                   <TableCell key={`inv-${i}`} className="border px-2 py-1 text-sm text-right">
                     {i === 0 ? "N/A" : "N/A"}
                   </TableCell>

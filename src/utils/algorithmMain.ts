@@ -1,10 +1,28 @@
 
-import { PERIODS } from '../types';
 import { ProductionScenario, OrderSchedule, ProductionScenarioArray, OrderScheduleArray } from '../types';
 import { lookAheadOptimizeMOCK } from './lookAheadOptimizeMOCK';
 import { lookAheadOptimizeAlgo1 } from './lookAheadOptimizeAlgo1';
 import { lookAheadOptimizeAlgo2 } from './lookAheadOptimizeAlgo2';
 import { lookAheadOptimizeAlgoRealistic } from './lookAheadOptimizeAlgoRealistic';
+
+// Default periods value, will be overridden at runtime
+let periodsValue = 12;
+
+/**
+ * Updates the periods value used by the algorithm
+ * @param newPeriods The new number of periods
+ */
+export function updatePeriodsValue(newPeriods: number) {
+  periodsValue = newPeriods;
+}
+
+/**
+ * Gets the current periods value
+ * @returns The current number of periods
+ */
+export function getPeriodsValue() {
+  return periodsValue;
+}
 
 /**
  * Calculates order schedules for an array of production scenarios
@@ -41,9 +59,9 @@ export function calculateOrderSchedule(
     PkQty,
     Rqt: [...Rqt],
     InRec: [...Rec],
-    Ord: new Array(PERIODS + 1).fill(0),
-    Rec: new Array(PERIODS + 1).fill(0),
-    Inv: new Array(PERIODS + 1).fill(0),
+    Ord: new Array(periodsValue + 1).fill(0),
+    Rec: new Array(periodsValue + 1).fill(0),
+    Inv: new Array(periodsValue + 1).fill(0),
     Notes: ""
   };
 
@@ -65,18 +83,18 @@ export function calculateOrderSchedule(
   }
 
   // Calculate future receiving based on orders and lead time
-  for (let week = 0; week <= PERIODS; week++) {
+  for (let week = 0; week <= periodsValue; week++) {
     const orderAmount = orderSchedule.Ord[week];
     if (orderAmount > 0) {
       // Determine when this order will be received
       const receiveWeek = week + LdTm;
       
-      if (receiveWeek <= PERIODS) {
+      if (receiveWeek <= periodsValue) {
         // Order is received within our planning horizon
         orderSchedule.Rec[receiveWeek] += orderAmount;
       } else {
         // Order would be received after our planning horizon, add to the last period
-        orderSchedule.Rec[PERIODS] += orderAmount;
+        orderSchedule.Rec[periodsValue] += orderAmount;
       }
     }
   }
@@ -86,7 +104,7 @@ export function calculateOrderSchedule(
   orderSchedule.Inv[0] = scenario.Inv ? scenario.Inv[0] : InvTgt;  // Use scenario inventory or default to target
   
   // Calculate inventory for the rest of the weeks
-  for (let week = 1; week <= PERIODS; week++) {
+  for (let week = 1; week <= periodsValue; week++) {
     const previousInv = orderSchedule.Inv[week - 1];
     const incomingRec = orderSchedule.Rec[week - 1];
     const outgoingRqt = orderSchedule.Rqt[week - 1];
@@ -101,7 +119,7 @@ export function calculateOrderSchedule(
   let hasExcessiveInventory = false;
   let consecutiveExcessWeeks = 0;
   
-  for (let week = 0; week <= PERIODS; week++) {
+  for (let week = 0; week <= periodsValue; week++) {
     const currentInv = orderSchedule.Inv[week];
     
     // Check for zero inventory

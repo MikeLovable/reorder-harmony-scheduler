@@ -1,7 +1,8 @@
 
-// Constants for the application - these will be replaced by state variables
-export const PERIODS = 12;
-export const SAMPLES = 20;
+// Dynamic configuration values - these are managed by AppConfigContext
+// Legacy constant exports for backward compatibility
+export const PERIODS = 12; // Default value, actual value comes from AppConfigContext
+export const SAMPLES = 20; // Default value, actual value comes from AppConfigContext
 
 export type ProductionScenario = {
   Sel?: boolean;
