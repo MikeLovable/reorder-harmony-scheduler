@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ProductionScenario, OrderSchedule } from '@/types';
+import { ProductionScenario, OrderSchedule, SAMPLES } from '@/types';
 import { generateProductionScenarios } from '@/utils/dataGenerator';
 import { calculateOrderSchedules } from '@/utils/reorderAlgorithm';
 import OrderScheduleTable from '@/components/OrderScheduleTable';
